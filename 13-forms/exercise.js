@@ -23,21 +23,26 @@
  *
  * @returns {{ name: string, price: number }}
  */
+
 export function readForm() {
-  // TODO: read .value off each input. Trim the name, and convert the price
-  // with Number().
-  throw new Error("readForm is not written yet");
+  const name = document.querySelector("#name").value.trim();
+  const price = Number(document.querySelector("#price").value);
+
+  return { name, price };
 }
+
 
 /**
  * Empties both boxes.
  *
  * @returns {void}
  */
+
 export function clearForm() {
-  // TODO: set each input's .value to an empty string.
-  throw new Error("clearForm is not written yet");
+  document.querySelector("#name").value = "";
+  document.querySelector("#price").value = "";
 }
+
 
 /**
  * Draws the list from an array of items, replacing whatever was there before.
@@ -51,11 +56,30 @@ export function clearForm() {
  * @param {Array<{name: string, price: number}>} items
  * @returns {void}
  */
+
 export function renderList(items) {
-  // TODO: empty #list first, then build one card per item — the same card
-  // shape as module 12.
-  throw new Error("renderList is not written yet");
+  const list = document.querySelector("#list");
+
+  // Remove the old cards first
+  list.textContent = "";
+
+  // Create one card for each item
+  for (const item of items) {
+    const card = document.createElement("li");
+    card.classList.add("card");
+
+    const title = document.createElement("h3");
+    title.textContent = item.name;
+
+    const price = document.createElement("p");
+    price.classList.add("price");
+    price.textContent = `${item.price} EGP`;
+
+    card.append(title, price);
+    list.append(card);
+  }
 }
+
 
 /**
  * Now you write the whole function. This is the one that makes the page work.
@@ -87,3 +111,43 @@ export function renderList(items) {
  */
 
 // TODO: write wireForm here.
+
+export function wireForm() {
+  const form = document.querySelector("#product-form");
+  const errorLine = document.querySelector("#error");
+
+  // Keep the products in an array
+  const products = [];
+
+  form.addEventListener("submit", (event) => {
+    // Stop the browser from reloading
+    event.preventDefault();
+
+    // Read the current input values
+    const { name, price } = readForm();
+
+    // Validate the product name
+    if (!name) {
+      errorLine.textContent = "Give the product a name.";
+      return;
+    }
+
+    // Validate the product price
+    const priceInput = document.querySelector("#price");
+
+    if (!priceInput.value || !Number.isFinite(price) || price <= 0) {
+      errorLine.textContent = "Give the product a price.";
+      return;
+    }
+
+    // The input is valid
+    errorLine.textContent = "";
+
+    // Update the data, then redraw the page
+    products.push({ name, price });
+    renderList(products);
+
+    // Empty the inputs
+    clearForm();
+  });
+}
